@@ -8,7 +8,7 @@ use App\Http\Controllers\LeadController;
 use App\Http\Controllers\UserController as UserManagementController;
 
 Route::get('/', function () {
-    return redirect()->route('routers.index');
+    return Inertia::render('welcome');
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
