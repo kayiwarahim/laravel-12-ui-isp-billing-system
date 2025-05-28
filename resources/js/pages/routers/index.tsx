@@ -2,9 +2,14 @@ import { Head } from '@inertiajs/react';
 import { Router, PageProps, BreadcrumbItem } from '../../types';
 import AppLayout from '@/layouts/app-layout';
 import { Link } from '@inertiajs/react';
+import { useState, useEffect } from 'react';
 
 interface Props extends PageProps {
     routers: Router[];
+}
+
+interface RouterStatus {
+    connected: boolean;
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -15,6 +20,32 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function Index({ routers }: Props) {
+    const [routerStatuses, setRouterStatuses] = useState<{ [key: number]: RouterStatus | 'loading' }>({});
+
+    useEffect(() => {
+        routers.forEach(router => {
+            setRouterStatuses(prevStatuses => ({
+                ...prevStatuses,
+                [router.id]: 'loading',
+            }));
+            fetch(route('routers.status', router.id))
+                .then(response => response.json())
+                .then((data: RouterStatus) => {
+                    setRouterStatuses(prevStatuses => ({
+                        ...prevStatuses,
+                        [router.id]: data,
+                    }));
+                })
+                .catch(error => {
+                    console.error(`Failed to fetch status for router ${router.id}:`, error);
+                    setRouterStatuses(prevStatuses => ({
+                        ...prevStatuses,
+                        [router.id]: { connected: false }, // Assume offline on error
+                    }));
+                });
+        });
+    }, [routers]);
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Routers" />
@@ -64,43 +95,47 @@ export default function Index({ routers }: Props) {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-200">
-                                {routers.map((router) => (
-                                    <tr key={router.id}>
-                                        <td className="px-6 py-4 whitespace-nowrap">{router.name}</td>
-                                        <td className="px-6 py-4 whitespace-nowrap">{router.host}</td>
-                                        <td className="px-6 py-4 whitespace-nowrap">{router.location}</td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                                                router.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                                            }`}>
-                                                {router.is_active ? 'Active' : 'Inactive'}
-                                            </span>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                            <Link
-                                                href={route('routers.show', router.id)}
-                                                className="text-indigo-600 hover:text-indigo-900 mr-3"
-                                            >
-                                                View
-                                            </Link>
-                                            <Link
-                                                href={route('routers.edit', router.id)}
-                                                className="text-yellow-600 hover:text-yellow-900 mr-3"
-                                            >
-                                                Edit
-                                            </Link>
-                                            <Link
-                                                href={route('routers.destroy', router.id)}
-                                                method="delete"
-                                                as="button"
-                                                className="text-red-600 hover:text-red-900"
-                                                preserveScroll
-                                            >
-                                                Delete
-                                            </Link>
-                                        </td>
-                                    </tr>
-                                ))}
+                                {routers.map((router) => {
+                                    const status = routerStatuses[router.id];
+                                    const displayStatus = status === 'loading' ? 'Loading...' : (status?.connected ? 'Online' : 'Offline');
+                                    const statusColorClass = status === 'loading' ? 'bg-gray-100 text-gray-800' : (status?.connected ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800');
+
+                                    return (
+                                        <tr key={router.id}>
+                                            <td className="px-6 py-4 whitespace-nowrap">{router.name}</td>
+                                            <td className="px-6 py-4 whitespace-nowrap">{router.host}</td>
+                                            <td className="px-6 py-4 whitespace-nowrap">{router.location}</td>
+                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${statusColorClass}`}>
+                                                    {displayStatus}
+                                                </span>
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                                <Link
+                                                    href={route('routers.show', router.id)}
+                                                    className="text-indigo-600 hover:text-indigo-900 mr-3"
+                                                >
+                                                    View
+                                                </Link>
+                                                <Link
+                                                    href={route('routers.edit', router.id)}
+                                                    className="text-yellow-600 hover:text-yellow-900 mr-3"
+                                                >
+                                                    Edit
+                                                </Link>
+                                                <Link
+                                                    href={route('routers.destroy', router.id)}
+                                                    method="delete"
+                                                    as="button"
+                                                    className="text-red-600 hover:text-red-900"
+                                                    preserveScroll
+                                                >
+                                                    Delete
+                                                </Link>
+                                            </td>
+                                        </tr>
+                                    );
+                                })}
                             </tbody>
                         </table>
                     </div>

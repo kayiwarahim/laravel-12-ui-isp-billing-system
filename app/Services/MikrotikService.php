@@ -6,6 +6,7 @@ use App\Models\Router;
 use RouterOS\Client;
 use RouterOS\Config;
 use RouterOS\Query;
+use Illuminate\Support\Facades\Log;
 
 class MikrotikService
 {
@@ -16,6 +17,9 @@ class MikrotikService
             'user' => $router->username,
             'pass' => $router->password,
             'port' => $router->port,
+            'timeout' => 5, // Add a timeout for the connection attempt
+            'attempts' => 1, // Only try connecting once
+            'delay' => 1, // Short delay between attempts (though only one attempt here)
         ]);
 
         return new Client($config);
@@ -37,18 +41,33 @@ class MikrotikService
 
     public function getStatus(Router $router)
     {
-        $client = $this->connect($router);
-        $query = new Query('/system/resource/print');
-        $resources = $client->query($query)->read();
-        
-        $query = new Query('/interface/print');
-        $interfaces = $client->query($query)->read();
+        $connected = false;
+        $resources = [];
+        $interfaces = [];
+        $last_check = now();
+
+        try {
+            $client = $this->connect($router);
+            // Sending a simple command to check connection, e.g., get system info
+            $query = new Query('/system/resource/print');
+            $resources = $client->query($query)->read();
+
+            $query = new Query('/interface/print');
+            $interfaces = $client->query($query)->read();
+
+            $connected = true;
+
+        } catch (\Exception $e) {
+            Log::error("Mikrotik connection failed for router {$router->id}: " . $e->getMessage());
+            // Connection failed, router is considered offline
+            $connected = false;
+        }
 
         return [
             'resources' => $resources,
             'interfaces' => $interfaces,
-            'connected' => true,
-            'last_check' => now(),
+            'connected' => $connected,
+            'last_check' => $last_check,
         ];
     }
 

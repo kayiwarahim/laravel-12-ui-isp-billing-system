@@ -9,10 +9,15 @@ const appName = import.meta.env.VITE_APP_NAME || 'TGN_SYSTEMS';
 
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,
-    resolve: (name) => resolvePageComponent(`./pages/${name}.tsx`, import.meta.glob('./pages/**/*.tsx')),
+    resolve: (name) => {
+        console.log('Resolving page:', name);
+        const page = resolvePageComponent(`./pages/${name}.tsx`, import.meta.glob('./pages/**/*.tsx'));
+        console.log('Resolved page:', page);
+        return page;
+    },
     setup({ el, App, props }) {
+        console.log('Setting up Inertia app with props:', props);
         const root = createRoot(el);
-
         root.render(<App {...props} />);
     },
     progress: {

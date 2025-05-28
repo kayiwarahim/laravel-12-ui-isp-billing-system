@@ -51,17 +51,22 @@ class RouterController extends Controller
     public function show(Router $router)
     {
         try {
-            $systemResource = $this->mikrotikService->getSystemResource($router);
-            $interfaces = $this->mikrotikService->getInterfaces($router);
+            $statusData = $this->mikrotikService->getStatus($router);
+            $systemResource = $statusData['resources'] ?? [];
+            $interfaces = $statusData['interfaces'] ?? [];
+            $connected = $statusData['connected'] ?? false;
         } catch (\Exception $e) {
+            // Handle potential exceptions from getStatus as well
             $systemResource = [];
             $interfaces = [];
+            $connected = false;
         }
 
         return Inertia::render('routers/show', [
             'router' => $router,
             'systemResource' => $systemResource,
             'interfaces' => $interfaces,
+            'connected' => $connected,
         ]);
     }
 
@@ -146,7 +151,7 @@ class RouterController extends Controller
         }
     }
 
-    public function backup(Router $router)
+    public function createBackup(Router $router)
     {
         try {
             $backup = $this->mikrotikService->createBackup($router);

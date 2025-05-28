@@ -9,7 +9,7 @@ use App\Http\Controllers\UserController as UserManagementController;
 
 Route::get('/', function () {
     return Inertia::render('welcome');
-});
+})->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {

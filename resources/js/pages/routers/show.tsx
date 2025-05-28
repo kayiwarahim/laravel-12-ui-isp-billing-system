@@ -7,6 +7,7 @@ interface Props extends PageProps {
     router: Router;
     systemResource: SystemResource[];
     interfaces: Interface[];
+    connected: boolean;
 }
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -15,7 +16,7 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-export default function Show({ router, systemResource, interfaces }: Props) {
+export default function Show({ router, systemResource, interfaces, connected }: Props) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={router.name} />
@@ -40,7 +41,7 @@ export default function Show({ router, systemResource, interfaces }: Props) {
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className=" bg-gray-50 grid grid-cols-1 md:grid-cols-2 gap-6">
                         {/* Router Information */}
                         <div className="bg-gray-50 p-4 rounded-lg">
                             <h3 className="text-lg font-semibold mb-4">Router Information</h3>
@@ -65,9 +66,9 @@ export default function Show({ router, systemResource, interfaces }: Props) {
                                     <dt className="text-sm font-medium text-gray-500">Status</dt>
                                     <dd className="mt-1">
                                         <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                                            router.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                                            connected ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
                                         }`}>
-                                            {router.is_active ? 'Active' : 'Inactive'}
+                                            {connected ? 'Online' : 'Offline'}
                                         </span>
                                     </dd>
                                 </div>
