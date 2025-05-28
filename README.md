@@ -34,7 +34,7 @@ Follow these steps to set up the project locally:
 1.  **Clone the repository:**
 
     ```bash
-    git clone <your-repository-url>
+    git clone https://github.com/kayiwarahim/laravel-12-ui-isp-billing-system
     cd laravel-12-ui-isp-billing-system
     ```
 
@@ -66,15 +66,24 @@ Follow these steps to set up the project locally:
     php artisan key:generate
     ```
 
-6.  **Configure your database in the `.env` file:**
+6.  **Configure your database in the `.env` file (Using SQLite):**
+
+    Modify the database section in your `.env` file to use SQLite:
 
     ```dotenv
-    DB_CONNECTION=mysql
-    DB_HOST=127.0.0.1
-    DB_PORT=3306
-    DB_DATABASE=your_database_name
-    DB_USERNAME=your_database_user
-    DB_PASSWORD=your_database_password
+    DB_CONNECTION=sqlite
+    # Remove or comment out the following lines if they exist:
+    # DB_HOST=127.0.0.1
+    # DB_PORT=3306
+    # DB_DATABASE=your_database_name
+    # DB_USERNAME=your_database_user
+    # DB_PASSWORD=your_database_password
+    ```
+
+    Create an empty `database.sqlite` file in the `database` directory if it doesn't exist:
+
+    ```bash
+    touch database/database.sqlite
     ```
 
 7.  **Configure Mikrotik API details in the `.env` file:**
@@ -109,6 +118,7 @@ Follow these steps to set up the project locally:
 *   `app/Http/Controllers/`: Laravel controllers handling requests and interacting with services/models.
 *   `app/Services/`: `MikrotikService` for RouterOS API interactions.
 *   `database/migrations/`: Database schema definitions.
+*   `database/database.sqlite`: The SQLite database file.
 *   `routes/web.php`: Web routes for the application.
 *   `resources/js/`: Frontend React components and Inertia pages (`pages/routers`, `pages/Users`, `pages/Finance`, `pages/Communication`).
 *   `resources/js/types/`: TypeScript type definitions.
@@ -131,4 +141,4 @@ Feel free to fork the repository and contribute. Pull requests are welcome.
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT). 
