@@ -7,6 +7,9 @@ use RouterOS\Client;
 use RouterOS\Config;
 use RouterOS\Query;
 use Illuminate\Support\Facades\Log;
+use RouterOS\Exceptions\ClientException;
+use RouterOS\Exceptions\ConfigException;
+use RouterOS\Exceptions\QueryException;
 
 class MikrotikService
 {
@@ -57,7 +60,7 @@ class MikrotikService
 
             $connected = true;
 
-        } catch (\Exception $e) {
+        } catch (ClientException | ConfigException | QueryException | \Exception $e) {
             Log::error("Mikrotik connection failed for router {$router->id}: " . $e->getMessage());
             // Connection failed, router is considered offline
             $connected = false;
@@ -92,5 +95,82 @@ class MikrotikService
         $backups = $client->query($query)->read();
 
         return $backups;
+    }
+
+    public function createBridge(Router $router, string $name)
+    {
+        $client = $this->connect($router);
+        $query = new Query('/interface/bridge/add');
+        $query->equal('name', $name);
+        return $client->query($query)->read();
+    }
+
+    public function enableBridge(Router $router, string $name)
+    {
+        $client = $this->connect($router);
+        // First get the bridge's internal ID
+        $query = new Query('/interface/bridge/print');
+        $query->where('name', $name);
+        $bridges = $client->query($query)->read();
+        
+        if (empty($bridges)) {
+            throw new \Exception("Bridge not found: {$name}");
+        }
+        
+        $bridgeId = $bridges[0]['.id'];
+        
+        // Now enable the bridge using its internal ID
+        $query = new Query('/interface/bridge/enable');
+        $query->equal('numbers', $bridgeId);
+        return $client->query($query)->read();
+    }
+
+    public function disableBridge(Router $router, string $name)
+    {
+        $client = $this->connect($router);
+        // First get the bridge's internal ID
+        $query = new Query('/interface/bridge/print');
+        $query->where('name', $name);
+        $bridges = $client->query($query)->read();
+        
+        if (empty($bridges)) {
+            throw new \Exception("Bridge not found: {$name}");
+        }
+        
+        $bridgeId = $bridges[0]['.id'];
+        
+        // Now disable the bridge using its internal ID
+        $query = new Query('/interface/bridge/disable');
+        $query->equal('numbers', $bridgeId);
+        return $client->query($query)->read();
+    }
+
+    public function removeBridge(Router $router, string $name)
+    {
+        $client = $this->connect($router);
+        // First get the bridge's internal ID
+        $query = new Query('/interface/bridge/print');
+        $query->where('name', $name);
+        $bridges = $client->query($query)->read();
+        
+        if (empty($bridges)) {
+            throw new \Exception("Bridge not found: {$name}");
+        }
+        
+        $bridgeId = $bridges[0]['.id'];
+        
+        // Now remove the bridge using its internal ID
+        $query = new Query('/interface/bridge/remove');
+        $query->equal('numbers', $bridgeId);
+        return $client->query($query)->read();
+    }
+
+    public function addIpAddress(Router $router, string $address, string $interface)
+    {
+        $client = $this->connect($router);
+        $query = new Query('/ip/address/add');
+        $query->equal('address', $address);
+        $query->equal('interface', $interface);
+        return $client->query($query)->read();
     }
 } 

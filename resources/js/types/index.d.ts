@@ -72,6 +72,7 @@ declare module '@/types' {
         type: string;
         'mac-address': string;
         running: boolean;
+        disabled?: 'true' | 'false';
     }
 
     export interface PageProps {

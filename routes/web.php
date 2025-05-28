@@ -32,6 +32,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/{router}/resources', [RouterController::class, 'resources'])->name('resources');
         Route::post('/{router}/restart', [RouterController::class, 'restart'])->name('restart');
         Route::post('/{router}/backup', [RouterController::class, 'backup'])->name('backup');
+
+        // Bridge Management Routes
+        Route::post('/{router}/bridges', [RouterController::class, 'createBridge'])->name('createBridge');
+        Route::post('/{router}/bridges/{name}/enable', [RouterController::class, 'enableBridge'])->name('enableBridge');
+        Route::post('/{router}/bridges/{name}/disable', [RouterController::class, 'disableBridge'])->name('disableBridge');
+        Route::delete('/{router}/bridges/{name}', [RouterController::class, 'removeBridge'])->name('removeBridge');
+
+        // IP Address Management Routes
+        Route::post('/{router}/ip-addresses', [RouterController::class, 'addIpAddress'])->name('addIpAddress');
     });
 
     // User, Ticket, and Lead Management Routes

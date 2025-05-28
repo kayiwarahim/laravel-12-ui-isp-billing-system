@@ -6,6 +6,7 @@ use App\Models\Router;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Services\MikrotikService;
+use Illuminate\Support\Facades\Log;
 
 class RouterController extends Controller
 {
@@ -161,6 +162,54 @@ class RouterController extends Controller
             ]);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function createBridge(Request $request, Router $router)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+        ]);
+
+        $this->mikrotikService->createBridge($router, $request->name);
+
+        return back()->with('success', 'Bridge created successfully.');
+    }
+
+    public function enableBridge(Request $request, Router $router, string $name)
+    {
+        $this->mikrotikService->enableBridge($router, $name);
+
+        return back()->with('success', 'Bridge enabled successfully.');
+    }
+
+    public function disableBridge(Request $request, Router $router, string $name)
+    {
+        $this->mikrotikService->disableBridge($router, $name);
+
+        return back()->with('success', 'Bridge disabled successfully.');
+    }
+
+    public function removeBridge(Request $request, Router $router, string $name)
+    {
+        $this->mikrotikService->removeBridge($router, $name);
+
+        return back()->with('success', 'Bridge removed successfully.');
+    }
+
+    public function addIpAddress(Request $request, Router $router)
+    {
+        $validated = $request->validate([
+            'address' => 'required|string',
+            'interface' => 'required|string',
+        ]);
+
+        try {
+            $this->mikrotikService->addIpAddress($router, $validated['address'], $validated['interface']);
+            return redirect()->back()->with('success', 'IP address added successfully.');
+        } catch (\Exception $e) {
+            Log::error("Failed to add IP address on router {$router->id}: " . $e->getMessage());
+            return redirect()->back()->with('error', 'Failed to add IP address.');
         }
     }
 } 
