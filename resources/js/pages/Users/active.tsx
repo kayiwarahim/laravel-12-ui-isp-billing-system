@@ -15,22 +15,17 @@ interface Props extends PageProps {
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Users',
-        href: '/users',
+        title: 'Active Users',
+        href: '/users/active',
     },
 ];
 
-const Index: React.FC<Props> = ({ users }) => {
+const Active: React.FC<Props> = ({ users }) => {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Users" />
             <div className="container mx-auto px-4 py-6">
                 <div className="bg-white shadow overflow-hidden sm:rounded-lg">
-                    <div className="px-4 py-5 sm:px-6">
-                        <h3 className="text-lg leading-6 font-medium text-gray-900">
-                            User List
-                        </h3>
-                    </div>
                     <div className="overflow-x-auto border-t border-gray-200">
                         <table className="min-w-full divide-y divide-gray-200">
                             <thead className="bg-gray-50">
@@ -55,4 +50,4 @@ const Index: React.FC<Props> = ({ users }) => {
     );
 };
 
-export default Index; 
+export default Active; 

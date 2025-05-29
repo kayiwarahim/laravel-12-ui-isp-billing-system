@@ -15,7 +15,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return Inertia::render('dashboard');
     })->name('dashboard');
 
-    // Router Management Routes
     Route::prefix('routers')->name('routers.')->group(function () {
         Route::get('/', [RouterController::class, 'index'])->name('index');
         Route::get('/create', [RouterController::class, 'create'])->name('create');
@@ -24,42 +23,27 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/{router}/edit', [RouterController::class, 'edit'])->name('edit');
         Route::put('/{router}', [RouterController::class, 'update'])->name('update');
         Route::delete('/{router}', [RouterController::class, 'destroy'])->name('destroy');
-        
-        // Additional Router Functionality Routes
         Route::get('/{router}/status', [RouterController::class, 'status'])->name('status');
         Route::get('/{router}/interfaces', [RouterController::class, 'interfaces'])->name('interfaces');
         Route::get('/{router}/resources', [RouterController::class, 'resources'])->name('resources');
         Route::post('/{router}/restart', [RouterController::class, 'restart'])->name('restart');
         Route::post('/{router}/backup', [RouterController::class, 'backup'])->name('backup');
-
-        // Bridge Management Routes
         Route::post('/{router}/bridges', [RouterController::class, 'createBridge'])->name('createBridge');
         Route::post('/{router}/bridges/{name}/enable', [RouterController::class, 'enableBridge'])->name('enableBridge');
         Route::post('/{router}/bridges/{name}/disable', [RouterController::class, 'disableBridge'])->name('disableBridge');
         Route::delete('/{router}/bridges/{name}', [RouterController::class, 'removeBridge'])->name('removeBridge');
-
-        // IP Address Management Routes
         Route::post('/{router}/ip-addresses', [RouterController::class, 'addIpAddress'])->name('addIpAddress');
     });
 
-    // User, Ticket, and Lead Management Routes
     Route::prefix('users')->name('users.')->group(function () {
         Route::get('/', [UserManagementController::class, 'index'])->name('index');
+        Route::get('/active', [UserManagementController::class, 'active'])->name('active');
     });
 
-    Route::resource('tickets', TicketController::class)->middleware(['auth', 'verified']);
-
-    // Placeholder routes for other sections (Finance and Communication)
     Route::prefix('finance')->name('finance.')->group(function () {
         Route::get('/packages', function () { return Inertia::render('Finance/Packages'); })->name('packages');
         Route::get('/payments', function () { return Inertia::render('Finance/Payments'); })->name('payments');
         Route::get('/vouchers', function () { return Inertia::render('Finance/Vouchers'); })->name('vouchers');
-        Route::get('/expenses', function () { return Inertia::render('Finance/Expenses'); })->name('expenses');
-    });
-
-    Route::prefix('communication')->name('communication.')->group(function () {
-        Route::get('/campaigns', function () { return Inertia::render('Communication/Campaigns'); })->name('campaigns');
-        Route::get('/sms', function () { return Inertia::render('Communication/Sms'); })->name('sms');
     });
 
 });

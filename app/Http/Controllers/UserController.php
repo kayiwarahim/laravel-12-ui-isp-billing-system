@@ -19,5 +19,12 @@ class UserController extends Controller
         ]);
     }
 
-    // Add other methods (create, store, show, edit, update, destroy) later if needed
+    public function active()
+    {
+        $activeUsers = User::where('active', true)->get();
+        return Inertia::render('Users/active', [
+            'users' => $activeUsers,
+        ]);
+    }
+
 }
