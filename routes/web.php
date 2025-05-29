@@ -4,7 +4,6 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\RouterController;
 use App\Http\Controllers\TicketController;
-use App\Http\Controllers\LeadController;
 use App\Http\Controllers\UserController as UserManagementController;
 
 Route::get('/', function () {
@@ -49,7 +48,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 
     Route::resource('tickets', TicketController::class)->middleware(['auth', 'verified']);
-    Route::resource('leads', LeadController::class)->middleware(['auth', 'verified']);
 
     // Placeholder routes for other sections (Finance and Communication)
     Route::prefix('finance')->name('finance.')->group(function () {
