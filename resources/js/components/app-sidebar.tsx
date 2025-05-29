@@ -3,7 +3,7 @@ import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BookOpen, Folder, LayoutGrid, Router, Users, Ticket, UserPlus, Package, CreditCard, Award, DollarSign, Megaphone, MessageSquare } from 'lucide-react';
+import { BookOpen, Folder, LayoutGrid, Router, Users, Package, CreditCard, Award, DollarSign, Megaphone, MessageSquare } from 'lucide-react';
 import AppLogo from './app-logo';
 
 // Define the combined list of navigation items
@@ -12,8 +12,6 @@ const mainNavItems: NavItem[] = [
     { title: 'Routers', href: '/routers', icon: Router },
     { title: 'Active Users', href: '/users/active', icon: Users },
     { title: 'Users', href: '/users', icon: Users },
-    { title: 'Tickets', href: '/tickets', icon: Ticket },
-    { title: 'Leads', href: '/leads', icon: UserPlus },
     { title: 'Packages', href: '/finance/packages', icon: Package },
     { title: 'Payments', href: '/finance/payments', icon: CreditCard },
     { title: 'Vouchers', href: '/finance/vouchers', icon: Award },
