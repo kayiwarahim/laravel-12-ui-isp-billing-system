@@ -15,9 +15,6 @@ const mainNavItems: NavItem[] = [
     { title: 'Packages', href: '/finance/packages', icon: Package },
     { title: 'Payments', href: '/finance/payments', icon: CreditCard },
     { title: 'Vouchers', href: '/finance/vouchers', icon: Award },
-    { title: 'Expenses', href: '/finance/expenses', icon: DollarSign },
-    { title: 'Campaigns', href: '/communication/campaigns', icon: Megaphone },
-    { title: 'Sms', href: '/communication/sms', icon: MessageSquare },
 ];
 
 // const footerNavItems: NavItem[] = [
